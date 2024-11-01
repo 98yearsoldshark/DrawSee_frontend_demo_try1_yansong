@@ -57,7 +57,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       if (ruleForm.username === 'admin' && ruleForm.pass === 'admin') {
         console.log('登录成功！');
-        router.push({ name: 'ChatPage' });
+        router.push({ name: 'FlowPage' });
       } else {
         console.error('用户名或密码错误！');
         ElMessage.error('用户名或密码错误！');
