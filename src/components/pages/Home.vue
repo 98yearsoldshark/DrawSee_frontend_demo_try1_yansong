@@ -8,8 +8,7 @@
           mode="horizontal"
           :ellipsis="false"
           @select="handleSelect"
-          background-color="#e6f1fc"
-      >
+          background-color="#e6f1fc">
         <el-menu-item index="0">
           <img
               style="width: 100px"
@@ -18,12 +17,12 @@
           />
         </el-menu-item>
         <el-menu-item index="1" @click="navigateTo('about')">关于我们</el-menu-item>
-        <el-menu-item index="2" @click="navigateTo('admin')">后台管理</el-menu-item>
+        <el-menu-item index="2" @click="handleAdminNavigation">后台管理</el-menu-item>
       </el-menu>
     </el-header>
     <div class="content">
       <div class="text-center mb-4">
-        <h1 class="display-4" style="font-family: 'Kaushan Script', cursive; color: #0e9898; margin-bottom: 100px; font-size: 3rem;">
+        <h1 class="display-4" style="font-family: 'Kaushan Script', cursive; color: #0e9898; margin-bottom: 120px; font-size: 3rem;">
           DrawSee - 可视化课程智能体平台
         </h1>
       </div>
@@ -155,7 +154,7 @@ const submitLoginForm = async (formEl: FormInstance | undefined) => {
           password: loginForm.pass,
         });
         localStorage.setItem('access_token', response.data.access_token);
-        localStorage.setItem('user_id', response.data.user_id);
+        localStorage.setItem('user_id', response.data.user_id);  // 保存 user_id
         router.push({ name: 'ChatPage' });
       } catch (error) {
         ElMessage.error('用户名或密码错误！');
@@ -163,14 +162,12 @@ const submitLoginForm = async (formEl: FormInstance | undefined) => {
     }
   });
 };
-
 // 注册表单提交
 const submitRegisterForm = async () => {
   if (registerForm.password !== registerForm.checkPassword) {
     ElMessage.error('密码和确认密码不一致');
     return;
   }
-
   try {
     const response = await axios.post('http://127.0.0.1:8000/api/register', {
       username: registerForm.username,
@@ -178,6 +175,7 @@ const submitRegisterForm = async () => {
       password: registerForm.password,
     });
     ElMessage.success('注册成功，请登录！');
+    localStorage.setItem('user_id', response.data.user_id);
     isRegisterMode.value = false; // 注册成功后切换到登录模式
   } catch (error) {
     ElMessage.error('注册失败，请稍后重试');
@@ -200,26 +198,29 @@ const resetRegisterForm = () => {
 const navigateTo = (page: string) => {
   if (page === 'about') {
     router.push({ name: 'AboutPage' });
-  } else if (page === 'admin') {
-    router.push({ name: 'KnowledgePointManager' });
+  }
+};
+
+// 管理后台导航逻辑
+const handleAdminNavigation = async () => {
+  const token = localStorage.getItem('access_token');
+  try {
+    // 调用管理员验证接口
+    const response = await axios.get('http://127.0.0.1:8000/api/admin/login', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (response.data.role === 'admin') {
+      router.push({ name: 'KnowledgePointManager' });
+    } else {
+      ElMessage.error('您没有管理员权限');
+    }
+  } catch (error) {
+    ElMessage.error('请先登录管理员账户');
+    router.push({ name: 'AdminLogin' });
   }
 };
 </script>
 
 <style lang="css">
 @import "../../assets/styles/home.css";
-
-.switch-mode {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.switch-mode a {
-  color: #409EFF;
-  text-decoration: none;
-}
-
-.switch-mode a:hover {
-  text-decoration: underline;
-}
 </style>

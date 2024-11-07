@@ -4,6 +4,7 @@ import ChatPage from "@/components/pages/ChatPage.vue";
 import FlowPage from "@/components/example/FlowPage.vue";
 import KnowledgePointManager from "@/components/pages/KnowledgePointManager.vue";
 import AboutPage from "@/components/pages/AboutPage.vue";
+import AdminLogin from "@/components/pages/AdminLogin.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -12,10 +13,15 @@ const routes: Array<RouteRecordRaw> = [
         component: Home,
     },
     {
-        path: '/chat/:agentId/:agentName/:openid',
+        path: '/chat/:agentId/:agentName/:userid',
         name: 'ChatPage',
         component: ChatPage,
         props: true
+    },
+    {
+        path: '/admin/login',
+        name: 'AdminLogin',
+        component: AdminLogin,
     },
     {
         path: '/admin',

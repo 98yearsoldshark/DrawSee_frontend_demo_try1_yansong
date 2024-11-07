@@ -67,7 +67,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { Agent, KnowledgeBase } from './types/types';
 
-const openid = ref('');
+const userid = ref('');
 const agents = ref<Agent[]>([]);
 const knowledgeBases = ref<KnowledgeBase[]>([]);
 const isNewAgentModalVisible = ref(false);
@@ -95,7 +95,7 @@ const fetchKnowledgeBases = async () => {
 };
 
 onMounted(() => {
-  openid.value = router.params.openid as string;
+  userid.value = localStorage.getItem('user_id') || '';
   fetchAgents();
   fetchKnowledgeBases();
 });
@@ -138,7 +138,7 @@ const enterAgent = (agentId: string, agentName: string) => {
     params: {
       agentId,
       agentName,
-      openid: openid.value
+      userid: userid.value
     }
   });
 };

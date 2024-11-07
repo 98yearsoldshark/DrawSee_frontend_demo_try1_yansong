@@ -75,12 +75,13 @@ export default defineComponent({
       type: String,
       default: 'AI 问答智能体',
     },
-    openid: {
+    userid: {
       type: String,
       required: true
     }
   },
   setup(props) {
+    const userid = ref<string>('');
     const chatId = ref<string>('');
     const userInput = ref<string>('');
     const nodes = ref<Node[]>([]);
@@ -88,6 +89,7 @@ export default defineComponent({
     const chatRecords = ref<any[]>([]);
 
     onMounted(async () => {
+      userid.value = localStorage.getItem('user_id') || '';
       await fetchChatRecords();
     });
 
@@ -112,7 +114,7 @@ export default defineComponent({
       const requestData: RequestModel = {
         chat_id: chatId.value,
         message: [{ content: userInput.value }],
-        openid: props.openid,
+        userid: props.userid,
         agent_id: props.agentId
       };
 

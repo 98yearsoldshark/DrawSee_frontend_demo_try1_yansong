@@ -7,11 +7,11 @@ export interface BotChat {
 export interface RequestModel {
     chat_id: string;
     message: BotChat[];
-    openid: string;
+    userid: string;
 }
 
 export interface ResponseModel {
-    openid: string;
+    userid: string;
     chat_id: string;
     message: BotChat[];
 }

@@ -95,3 +95,17 @@ body {
         padding-top: 40px;
     }
 }
+
+.switch-mode {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.switch-mode a {
+    color: #409EFF;
+    text-decoration: none;
+}
+
+.switch-mode a:hover {
+    text-decoration: underline;
+}
