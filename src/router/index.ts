@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '@/components/Home.vue';
-import ChatPage from "@/components/ChatPage.vue";
-import FlowPage from "@/components/FlowPage.vue";
-
+import Home from '@/components/pages/Home.vue';
+import ChatPage from "@/components/pages/ChatPage.vue";
+import FlowPage from "@/components/example/FlowPage.vue";
+import KnowledgePointManager from "@/components/pages/KnowledgePointManager.vue";
+import AboutPage from "@/components/pages/AboutPage.vue";
+import Register from "@/components/pages/Register.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -11,14 +13,30 @@ const routes: Array<RouteRecordRaw> = [
         component: Home,
     },
     {
-        path: '/chat',
+        path: '/chat/:agentId/:agentName/:openid',
         name: 'ChatPage',
         component: ChatPage,
+        props: true
+    },
+    {
+        path: '/admin',
+        name: 'KnowledgePointManager',
+        component: KnowledgePointManager,
+    },
+    {
+        path: '/about',
+        name: 'AboutPage',
+        component: AboutPage,
     },
     {
         path: '/flow',
         name: 'FlowPage',
         component: FlowPage,
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register,
     },
 ];
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EdgeProps, Node } from '@vue-flow/core'
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, useNodesData } from '@vue-flow/core'
-import type { ProcessNodeData } from './types'
+import type { ProcessNodeData } from './types/types'
 import {computed, nextTick, ref, toRef, watch} from "vue";
 
 const props = defineProps<EdgeProps>()

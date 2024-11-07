@@ -1,0 +1,183 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    background-color: #ffffff;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: #f7f7f8;
+    border-right: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.logo {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.new-chat-btn {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.new-chat-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    gap: 8px;
+}
+
+.history-item:hover {
+    background-color: #e5e7eb;
+}
+
+.history-item.active {
+    background-color: #e5e7eb;
+}
+
+.chat-icon {
+    font-size: 16px;
+}
+
+.chat-title {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+}
+
+.delete-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+}
+
+.history-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-header {
+    padding: 16px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.chat-header h2 {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.vue-flow-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.input-container {
+    padding: 16px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.chat-input {
+    flex: 1;
+    border: none;
+    resize: none;
+    height: 40px;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+}
+
+.send-btn {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.send-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.input-tips {
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}

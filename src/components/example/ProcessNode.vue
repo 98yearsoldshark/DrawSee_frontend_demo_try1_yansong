@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NodeProps } from '@vue-flow/core'
 import { Handle, useHandleConnections } from '@vue-flow/core'
-import type { ProcessNodeData } from './types'
+import type { ProcessNodeData } from './types/types'
 import {toRef} from "vue";
 
 const props = defineProps<NodeProps<ProcessNodeData>>()

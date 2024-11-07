@@ -1,0 +1,96 @@
+.home {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0;
+    background-color: #e1f4f4;
+}
+
+.content {
+    height: 100%;
+    padding-top: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.el-menu {
+    width: 100%;
+    border-bottom: none !important;
+}
+
+.el-menu-item {
+    color: #2c3e50 !important;
+}
+
+.el-menu-item:hover {
+    background-color: #e1f4f4 !important;
+}
+
+.el-menu-item.is-active {
+    color: #e1f4f4 !important;
+}
+
+.login-form {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+}
+
+.el-menu--horizontal > .el-menu-item:nth-child(1) {
+    margin-right: auto;
+}
+
+/* 确保页面不会出现滚动条 */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 调整标题的响应式布局 */
+.text-center {
+    padding: 0 20px;
+    text-align: center;
+}
+
+.display-4 {
+    margin-top: 0;
+    white-space: nowrap;
+}
+
+@media (max-height: 768px) {
+    .display-4 {
+        margin-bottom: 50px !important;
+        font-size: 2.5rem !important;
+    }
+
+    .content {
+        padding-top: 40px;
+    }
+}

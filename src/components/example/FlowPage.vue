@@ -2,8 +2,8 @@
 import dagre from '@dagrejs/dagre'
 import { ConnectionMode, Panel, Position, VueFlow, useVueFlow } from '@vue-flow/core'
 
-import { initialEdges, initialNodes } from './initial-elements'
-import { useRunProcess } from './useRunProcess'
+import { initialEdges, initialNodes } from './types/initial-elements'
+import { useRunProcess } from './types/useRunProcess'
 import AnimationEdge from './AnimationEdge.vue'
 import ProcessNode from './ProcessNode.vue'
 import {nextTick, ref} from "vue";
