@@ -4,7 +4,6 @@ import ChatPage from "@/components/pages/ChatPage.vue";
 import FlowPage from "@/components/example/FlowPage.vue";
 import KnowledgePointManager from "@/components/pages/KnowledgePointManager.vue";
 import AboutPage from "@/components/pages/AboutPage.vue";
-import Register from "@/components/pages/Register.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -32,11 +31,6 @@ const routes: Array<RouteRecordRaw> = [
         path: '/flow',
         name: 'FlowPage',
         component: FlowPage,
-    },
-    {
-        path: '/register',
-        name: 'Register',
-        component: Register,
     },
 ];
 
