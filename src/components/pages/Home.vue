@@ -1,5 +1,5 @@
 <template>
-  <div class="home" :style="{ backgroundImage: `url(${backgroundImage})` }">
+  <div class="home">
     <el-header class="fixed-header">
       <!-- 导航栏部分保持不变 -->
       <el-menu
@@ -92,7 +92,6 @@
 </template>
 
 <script lang="ts" setup>
-import backgroundImage from '../../assets/background.png';
 import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import { ElMessage, FormInstance, FormRules } from 'element-plus';
