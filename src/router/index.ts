@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/components/pages/Home.vue';
+import AgentsPage from '@/components/pages/AgentsPage.vue';
 import ChatPage from "@/components/pages/ChatPage.vue";
 import FlowPage from "@/components/example/FlowPage.vue";
+import KnowledgeBaseManager from "@/components/pages/KnowledgeBaseManager.vue";
 import KnowledgePointManager from "@/components/pages/KnowledgePointManager.vue";
 import AboutPage from "@/components/pages/AboutPage.vue";
 import AdminLogin from "@/components/pages/AdminLogin.vue";
@@ -13,8 +15,12 @@ const routes: Array<RouteRecordRaw> = [
         component: Home,
     },
     {
-        path: '/chat/:agentId/:agentName/:userid',
-        name: 'ChatPage',
+        path: '/agent',
+        name: 'AgentsPage',
+        component: AgentsPage,
+    },
+    {
+        path: '/chat/:agentId/:user_id',        name: 'ChatPage',
         component: ChatPage,
         props: true
     },
@@ -24,9 +30,16 @@ const routes: Array<RouteRecordRaw> = [
         component: AdminLogin,
     },
     {
-        path: '/admin',
+        path: '/admin/knowledgebase/:user_id',
+        name: 'KnowledgeBaseManager',
+        component: KnowledgeBaseManager,
+        props: true,
+    },
+    {
+        path: '/admin/knowledgebase/:user_id/:knowledge_base_id',
         name: 'KnowledgePointManager',
         component: KnowledgePointManager,
+        props: true,
     },
     {
         path: '/about',

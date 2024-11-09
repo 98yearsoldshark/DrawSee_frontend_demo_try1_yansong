@@ -146,7 +146,7 @@ const toggleMode = () => {
 // 登录表单提交
 const submitLoginForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  formEl.validate(async (valid) => {
+  await formEl.validate(async (valid) => {
     if (valid) {
       try {
         const response = await axios.post('http://127.0.0.1:8000/api/login', {
@@ -154,8 +154,9 @@ const submitLoginForm = async (formEl: FormInstance | undefined) => {
           password: loginForm.pass,
         });
         localStorage.setItem('access_token', response.data.access_token);
-        localStorage.setItem('user_id', response.data.user_id);  // 保存 user_id
-        router.push({ name: 'ChatPage' });
+        localStorage.setItem('user_id', response.data.user_id);
+        // 登录成功后跳转到 AgentsPage
+        await router.push({name: 'AgentsPage'});
       } catch (error) {
         ElMessage.error('用户名或密码错误！');
       }
@@ -203,12 +204,9 @@ const navigateTo = (page: string) => {
 
 // 管理后台导航逻辑
 const handleAdminNavigation = async () => {
-  const token = localStorage.getItem('access_token');
   try {
     // 调用管理员验证接口
-    const response = await axios.get('http://127.0.0.1:8000/api/admin/login', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await axios.get('http://127.0.0.1:8000/api/admin/login');
     if (response.data.role === 'admin') {
       router.push({ name: 'KnowledgePointManager' });
     } else {
@@ -216,7 +214,7 @@ const handleAdminNavigation = async () => {
     }
   } catch (error) {
     ElMessage.error('请先登录管理员账户');
-    router.push({ name: 'AdminLogin' });
+    await router.push({name: 'AdminLogin'});
   }
 };
 </script>

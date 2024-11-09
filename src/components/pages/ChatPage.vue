@@ -78,6 +78,10 @@ export default defineComponent({
     userid: {
       type: String,
       required: true
+    },
+    knowledgeBaseId: { // 新增 knowledgeBaseId 属性
+      type: String,
+      required: true
     }
   },
   setup(props) {
@@ -91,6 +95,7 @@ export default defineComponent({
     onMounted(async () => {
       userid.value = localStorage.getItem('user_id') || '';
       await fetchChatRecords();
+      await loadKnowledgeNodes(); // 加载知识库中的节点
     });
 
     const fetchChatRecords = async () => {
@@ -99,6 +104,20 @@ export default defineComponent({
         chatRecords.value = response.data;
       } catch (error) {
         console.error('获取历史对话失败:', error);
+      }
+    };
+
+    const loadKnowledgeNodes = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/knowledge_bases/${props.knowledgeBaseId}/nodes`);
+        // 处理返回的知识节点数据，假设将其展示在 nodes 中
+        nodes.value = response.data.map((node, index) => ({
+          id: `${index}`,
+          data: { label: node.name },
+          position: { x: 100, y: index * 100 },
+        }));
+      } catch (error) {
+        console.error('加载知识节点失败:', error);
       }
     };
 
@@ -158,38 +177,6 @@ export default defineComponent({
             id: `e${chatId.value}-${index - 1}-${index}`,
             source: `${chatId.value}-${index - 1}`,
             target: nodeId,
-            animated: true,
-          });
-        }
-
-        if (msg.attachments) {
-          msg.attachments.forEach(att => {
-            const attNodeId = `${nodeId}-att-${att.id}`;
-            nodes.value.push({
-              id: attNodeId,
-              data: { label: `下载 ${att.type}` },
-              position: { x: 300, y: 100 + index * 100 },
-            });
-            edges.value.push({
-              id: `e${attNodeId}`,
-              source: nodeId,
-              target: attNodeId,
-              animated: true,
-            });
-          });
-        }
-
-        if (msg.iframe) {
-          const iframeNodeId = `${nodeId}-iframe`;
-          nodes.value.push({
-            id: iframeNodeId,
-            data: { label: '查看内容', iframe: msg.iframe },
-            position: { x: 300, y: 200 + index * 100 },
-          });
-          edges.value.push({
-            id: `e${iframeNodeId}`,
-            source: nodeId,
-            target: iframeNodeId,
             animated: true,
           });
         }

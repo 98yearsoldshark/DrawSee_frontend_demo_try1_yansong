@@ -51,9 +51,11 @@
           <a-select v-model:value="selectedKnowledgeBaseId" placeholder="请选择知识库">
             <a-select-option
                 v-for="kb in knowledgeBases"
-                :key="kb._id"
-                :value="kb._id"
-            >{{ kb.name }}</a-select-option>
+                :key="kb.knowledge_base_id"
+                :value="kb.knowledge_base_id"
+            >
+              {{ kb.name }}
+            </a-select-option>
           </a-select>
         </a-form-item>
       </a-form>
@@ -87,7 +89,7 @@ const fetchAgents = async () => {
 
 const fetchKnowledgeBases = async () => {
   try {
-    const response = await axios.get<KnowledgeBase[]>('http://127.0.0.1:8000/api/knowledge-bases');
+    const response = await axios.get<KnowledgeBase[]>('http://127.0.0.1:8000/api/knowledge_bases');
     knowledgeBases.value = response.data;
   } catch (error) {
     console.error('获取知识库失败:', error);
@@ -138,7 +140,8 @@ const enterAgent = (agentId: string, agentName: string) => {
     params: {
       agentId,
       agentName,
-      userid: userid.value
+      userid: userid.value,
+      knowledgeBaseId: selectedKnowledgeBaseId.value, // 将知识库 ID 传递给 ChatPage
     }
   });
 };

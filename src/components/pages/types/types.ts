@@ -24,6 +24,7 @@ export interface Agent {
 }
 
 export interface KnowledgeBase {
-    _id: string;
+    knowledge_base_id: string;
     name: string;
+    description: string;
 }
