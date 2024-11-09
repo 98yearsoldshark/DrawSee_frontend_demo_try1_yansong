@@ -1,27 +1,74 @@
 <template>
-  <div class="knowledge-base-manager">
-    <a-button type="primary" @click="openAddDialog">创建知识库</a-button>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+      <div class="logo-area">
+        <h2>“昭析”知识库管理</h2>
+      </div>
+      <div class="sidebar-menu">
+        <a-button type="primary" class="create-btn" @click="openAddDialog">
+          <i class="fas fa-plus"></i>
+          创建知识库
+        </a-button>
+      </div>
+    </div>
 
-    <a-row gutter="16" class="knowledge-base-list">
-      <a-col v-for="knowledgeBase in knowledgeBases" :key="knowledgeBase.knowledge_base_id" :span="8">
-        <a-card
-            :title="knowledgeBase.name"
-            bordered
-            class="knowledge-base-card"
-        >
-          <p>{{ knowledgeBase.description }}</p>
-          <template #actions>
-            <a-button type="link" @click="editKnowledgeBase(knowledgeBase)">修改</a-button>
-            <a-button type="link" @click="goToKnowledgeBase(knowledgeBase.knowledge_base_id)">进入编辑</a-button>
-          </template>
-        </a-card>
-      </a-col>
-    </a-row>
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <div class="content-header">
+        <h2>我的知识库</h2>
+      </div>
 
-    <el-dialog v-model="showDialog" :title="isEditMode ? '修改知识库' : '创建知识库'">
-      <el-input v-model="currentKnowledgeBase.name" placeholder="知识库名称" />
-      <el-input v-model="currentKnowledgeBase.description" placeholder="描述" type="textarea" />
+      <div class="knowledge-base-grid">
+        <div v-for="knowledgeBase in knowledgeBases"
+             :key="knowledgeBase.knowledge_base_id"
+             class="kb-card">
+          <div class="kb-card-content">
+            <div class="kb-image">
+              <img :src="`https://picsum.photos/seed/${knowledgeBase.knowledge_base_id}/300/200`"
+                   :alt="knowledgeBase.name">
+            </div>
+            <div class="kb-info">
+              <h3>{{ knowledgeBase.name }}</h3>
+              <p class="description">{{ knowledgeBase.description }}</p>
+            </div>
+          </div>
+          <div class="kb-actions">
+            <a-tooltip title="设置">
+              <a-button class="action-btn" type="text" @click="editKnowledgeBase(knowledgeBase)">
+                <i class="fas fa-cog"></i>
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="删除">
+              <a-button class="action-btn delete-btn" type="text" @click="deleteKnowledgeBase(knowledgeBase.knowledge_base_id)">
+                <i class="fas fa-trash-alt"></i>
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="进入知识库">
+              <a-button class="action-btn enter-btn" type="text" @click="goToKnowledgeBase(knowledgeBase.knowledge_base_id)">
+                <i class="fas fa-arrow-right"></i>
+              </a-button>
+            </a-tooltip>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <el-dialog v-model="showDialog"
+               :title="isEditMode ? '修改知识库' : '创建知识库'"
+               width="500px"
+               class="kb-dialog">
+      <el-form label-position="top">
+        <el-form-item label="知识库名称">
+          <el-input v-model="currentKnowledgeBase.name" placeholder="请输入知识库名称" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="currentKnowledgeBase.description"
+                    type="textarea"
+                    rows="4"
+                    placeholder="请输入知识库描述" />
+        </el-form-item>
+      </el-form>
       <template #footer>
         <el-button @click="showDialog = false">取消</el-button>
         <el-button type="primary" @click="saveKnowledgeBase">保存</el-button>
@@ -46,7 +93,6 @@ export default defineComponent({
     const currentKnowledgeBase = ref<KnowledgeBase>({ knowledge_base_id: "", name: '', description: '' });
     const currentUserId = ref<string>('');
 
-    // 获取当前用户的ID
     const getCurrentUserId = () => {
       const userId = localStorage.getItem('user_id');
       if (userId) {
@@ -56,87 +102,84 @@ export default defineComponent({
       }
     };
 
-    // 获取 Authorization token
     const getAuthToken = () => {
       const token = localStorage.getItem('access_token');
-      if (token) {
-        return `Bearer ${token}`;
-      }
-      return '';
+      return token ? `Bearer ${token}` : '';
     };
 
-    // 加载知识库列表
     const loadKnowledgeBases = async () => {
       try {
-        const token = getAuthToken();  // 获取 token
+        const token = getAuthToken();
         const response = await axios.get(`http://127.0.0.1:8000/api/knowledge_bases/${currentUserId.value}`, {
-          headers: {
-            Authorization: token,  // 在请求头中携带 token
-          },
+          headers: { Authorization: token },
         });
+
+        // 将返回的知识库详细信息直接赋值给 knowledgeBases
         knowledgeBases.value = response.data;
       } catch (error) {
         message.error('加载知识库失败');
       }
     };
 
-    // 打开新增/编辑知识库对话框
     const openAddDialog = () => {
       currentKnowledgeBase.value = { knowledge_base_id: "", name: '', description: '' };
       isEditMode.value = false;
       showDialog.value = true;
     };
 
-    // 保存知识库（新增或编辑）
     const saveKnowledgeBase = async () => {
       try {
-        const token = getAuthToken();  // 获取 token
+        const token = getAuthToken();
         if (isEditMode.value && currentKnowledgeBase.value.knowledge_base_id) {
-          // 编辑模式 - 使用 PUT 方法更新知识库
           await axios.put(`http://127.0.0.1:8000/api/knowledge_bases/${currentUserId.value}/${currentKnowledgeBase.value.knowledge_base_id}`, {
             name: currentKnowledgeBase.value.name,
             description: currentKnowledgeBase.value.description
           }, {
-            headers: {
-              Authorization: token,  // 在请求头中携带 token
-            },
+            headers: { Authorization: token },
           });
           message.success('知识库修改成功');
         } else {
-          // 创建模式 - 使用 POST 方法创建新知识库
           const response = await axios.post(`http://127.0.0.1:8000/api/knowledge_bases/${currentUserId.value}`, {
             name: currentKnowledgeBase.value.name,
             description: currentKnowledgeBase.value.description
           }, {
-            headers: {
-              Authorization: token,  // 在请求头中携带 token
-            },
+            headers: { Authorization: token },
           });
           message.success('知识库创建成功');
           currentKnowledgeBase.value.knowledge_base_id = response.data.knowledge_base_id;
         }
         showDialog.value = false;
-        await loadKnowledgeBases();  // 重新加载知识库列表
+        await loadKnowledgeBases();
       } catch (error) {
         message.error('操作失败');
       }
     };
 
-    // 编辑知识库
     const editKnowledgeBase = (knowledgeBase: KnowledgeBase) => {
       currentKnowledgeBase.value = { ...knowledgeBase };
       isEditMode.value = true;
       showDialog.value = true;
     };
 
-    // 跳转到知识库详情页
+    const deleteKnowledgeBase = async (knowledgeBaseId: string) => {
+      try {
+        const token = getAuthToken();
+        await axios.delete(`http://127.0.0.1:8000/api/knowledge_bases/${currentUserId.value}/${knowledgeBaseId}`, {
+          headers: { Authorization: token },
+        });
+        message.success('知识库删除成功');
+        await loadKnowledgeBases();
+      } catch (error) {
+        message.error('删除知识库失败');
+      }
+    };
+
     const goToKnowledgeBase = (id: string) => {
       router.push({ name: 'KnowledgePointManager', params: { knowledgeBaseId: id } });
     };
 
-    // 在组件挂载时执行
     onMounted(() => {
-      getCurrentUserId();  // 获取当前用户 ID
+      getCurrentUserId();
       loadKnowledgeBases();
     });
 
@@ -148,6 +191,7 @@ export default defineComponent({
       openAddDialog,
       saveKnowledgeBase,
       editKnowledgeBase,
+      deleteKnowledgeBase,
       goToKnowledgeBase
     };
   },
@@ -155,17 +199,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.knowledge-base-manager {
-  padding: 20px;
-}
-
-.knowledge-base-list {
-  margin-top: 20px;
-}
-
-.knowledge-base-card {
-  text-align: center;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+@import "../../assets/styles/knowledgebasemanager.css";
 </style>
