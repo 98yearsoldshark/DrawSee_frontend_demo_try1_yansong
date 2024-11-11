@@ -204,7 +204,10 @@ export default defineComponent({
       if (knowledgeBase && knowledgeBase.knowledge_base_id) {
         router.push({
           name: 'KnowledgePointManager',
-          params: { knowledgeBaseId: knowledgeBase.knowledge_base_id.toString() }
+          params: {
+            user_id: currentUserId.value,
+            knowledge_base_id: knowledgeBase.knowledge_base_id
+          }
         });
       } else {
         message.error('无效的知识库ID');
