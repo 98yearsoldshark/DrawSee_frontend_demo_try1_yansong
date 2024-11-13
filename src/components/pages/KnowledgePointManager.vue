@@ -20,6 +20,10 @@
               <i class="fas fa-trash-alt"></i>
               删除
             </a-button>
+            <!-- 在现有知识点旁边添加加号按钮 -->
+            <a-button type="link" @click="addSubPoint(record)">
+              <i class="fas fa-plus-circle"></i> 添加子节点
+            </a-button>
           </div>
         </template>
       </template>
@@ -67,10 +71,11 @@ import axios from 'axios';
 import ResourceEditor from './ResourceEditor.vue';
 
 interface KnowledgePoint {
-  id?: string; // 修改为id而不是_id
+  id?: string;
   name: string;
   resource: any[];
   children: any[];
+  parent_knowledge_point_id?: string;  // 可选字段
 }
 
 export default defineComponent({
@@ -129,7 +134,7 @@ export default defineComponent({
     };
 
     const openAddDialog = () => {
-      currentPoint.value = { name: '', resource: [], children: [] };
+      currentPoint.value = { name: '', resource: [], parent_knowledge_point_id: '', children: [] };
       isEditMode.value = false;
       showDialog.value = true;
     };
@@ -137,24 +142,26 @@ export default defineComponent({
     const savePoint = async () => {
       try {
         const token = getAuthToken();
-        if (isEditMode.value && currentPoint.value.id) {  // 修改为 id
-          // 更新知识点
+        const requestData = {
+          name: Array.isArray(currentPoint.value.name) ? currentPoint.value.name : [currentPoint.value.name],
+          resource: currentPoint.value.resource.length ? currentPoint.value.resource : [
+            { type: "", value: "" }
+          ],
+          parent_knowledge_point_id: currentPoint.value.parent_knowledge_point_id || null,
+        };
+
+        if (isEditMode.value && currentPoint.value.id) {
           await axios.put(
               `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points/${currentPoint.value.id}`,
-              currentPoint.value,
-              {
-                headers: { Authorization: token }
-              }
+              requestData,
+              { headers: { Authorization: token } }
           );
           message.success('知识点更新成功');
         } else {
-          // 创建知识点
           await axios.post(
               `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points`,
-              currentPoint.value,
-              {
-                headers: { Authorization: token }
-              }
+              requestData,
+              { headers: { Authorization: token } }
           );
           message.success('知识点创建成功');
         }
@@ -173,6 +180,7 @@ export default defineComponent({
     };
 
     const handleDelete = (id: string) => {
+      // 将 id 正确赋值给 deleteId
       deleteId.value = id;
       showDeleteConfirm.value = true;
     };
@@ -180,21 +188,29 @@ export default defineComponent({
     const confirmDelete = async () => {
       try {
         const token = getAuthToken();
-        // 删除知识点时通过请求体传递 point_id
+        // 删除请求时使用 deleteId 传递正确的知识点 id
         await axios.delete(
-            `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points`,
-            {
-              headers: { Authorization: token },
-              data: { point_id: deleteId.value }  // 通过请求体传递 point_id
-            }
+            `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points/${deleteId.value}`,
+            { headers: { Authorization: token } }
         );
         message.success('知识点删除成功');
         showDeleteConfirm.value = false;
-        await loadPoints();
+        await loadPoints();  // 删除成功后刷新列表
       } catch (error) {
         console.error('Delete point error:', error);
         message.error('删除失败');
       }
+    };
+
+    const addSubPoint = (parentPoint: KnowledgePoint) => {
+      currentPoint.value = {
+        name: '',
+        resource: [],
+        parent_knowledge_point_id: parentPoint.id,  // 自动填充父级节点的 ID
+        children: []
+      };
+      isEditMode.value = false;
+      showDialog.value = true;
     };
 
     onMounted(() => {
@@ -213,34 +229,13 @@ export default defineComponent({
       savePoint,
       editPoint,
       handleDelete,
-      confirmDelete
+      confirmDelete,
+      addSubPoint
     };
   }
 });
 </script>
 
 <style scoped>
-.point-manager {
-  padding: 24px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-:deep(.ant-btn-link) {
-  padding: 0 8px;
-}
-
-:deep(.ant-btn-link i) {
-  margin-right: 4px;
-}
+@import "../../assets/styles/knowledgepointmanager.css";
 </style>

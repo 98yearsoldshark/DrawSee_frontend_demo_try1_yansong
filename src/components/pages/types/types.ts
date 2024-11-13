@@ -28,3 +28,16 @@ export interface KnowledgeBase {
     name: string;
     description: string;
 }
+
+export interface Resource {
+    type: string;
+    value: string;
+}
+
+export interface KnowledgePoint {
+    id?: string;
+    name: string[];
+    resource: Resource[];
+    parent_knowledge_point_id?: string;
+    children: KnowledgePoint[];
+}
