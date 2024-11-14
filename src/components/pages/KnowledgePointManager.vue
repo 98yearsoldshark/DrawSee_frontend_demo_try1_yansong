@@ -151,6 +151,7 @@ export default defineComponent({
         };
 
         if (isEditMode.value && currentPoint.value.id) {
+          // 更新操作
           await axios.put(
               `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points/${currentPoint.value.id}`,
               requestData,
@@ -158,12 +159,21 @@ export default defineComponent({
           );
           message.success('知识点更新成功');
         } else {
-          await axios.post(
+          // 创建操作
+          const response = await axios.post(
               `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points`,
               requestData,
               { headers: { Authorization: token } }
           );
           message.success('知识点创建成功');
+
+          // 这里确保将新创建的知识点 ID 保存在 currentPoint 中
+          currentPoint.value.id = response.data.id;  // 保存返回的 ID
+
+          // 如果是添加子节点，则返回父节点 ID
+          if (currentPoint.value.parent_knowledge_point_id) {
+            currentPoint.value.parent_knowledge_point_id = response.data.id;
+          }
         }
         showDialog.value = false;
         await loadPoints();
@@ -180,7 +190,7 @@ export default defineComponent({
     };
 
     const handleDelete = (id: string) => {
-      // 将 id 正确赋值给 deleteId
+      // 删除时直接赋值为当前选择的知识点 ID
       deleteId.value = id;
       showDeleteConfirm.value = true;
     };
@@ -188,7 +198,7 @@ export default defineComponent({
     const confirmDelete = async () => {
       try {
         const token = getAuthToken();
-        // 删除请求时使用 deleteId 传递正确的知识点 id
+        // 通过 deleteId 获取正确的 ID
         await axios.delete(
             `http://127.0.0.1:8000/api/knowledge_bases/${props.knowledge_base_id}/points/${deleteId.value}`,
             { headers: { Authorization: token } }
@@ -212,11 +222,6 @@ export default defineComponent({
       isEditMode.value = false;
       showDialog.value = true;
     };
-
-    onMounted(() => {
-      console.log('Component mounted with knowledge_base_id:', props.knowledge_base_id);
-      loadPoints();
-    });
 
     return {
       knowledgePoints,
