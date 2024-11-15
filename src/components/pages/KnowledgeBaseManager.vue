@@ -1,20 +1,18 @@
 <template>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <div class="app-container">
-    <!-- 侧边栏 -->
     <div class="sidebar">
       <div class="logo-area">
-        <h2>“昭析”知识库管理</h2>
+        <img src="../../assets/drawsee-logo.png" alt="昭析" class="logo-img">
+        <h2>"昭析"知识库管理</h2>
       </div>
       <div class="sidebar-menu">
-        <a-button type="primary" class="create-btn" @click="openAddDialog">
+        <a-button type="success" class="create-btn" @click="openAddDialog">
           <i class="fas fa-plus"></i>
           创建知识库
         </a-button>
       </div>
     </div>
 
-    <!-- 主内容区 -->
     <div class="main-content">
       <div class="content-header">
         <h2>我的知识库</h2>
@@ -35,21 +33,15 @@
             </div>
           </div>
           <div class="kb-actions">
-            <a-tooltip title="设置">
-              <a-button class="action-btn" type="text" @click="editKnowledgeBase(knowledgeBase)">
-                <i class="fas fa-cog"></i>
-              </a-button>
-            </a-tooltip>
-            <a-tooltip title="删除">
-              <a-button class="action-btn delete-btn" type="text" @click="deleteKnowledgeBase(knowledgeBase.knowledge_base_id)">
-                <i class="fas fa-trash-alt"></i>
-              </a-button>
-            </a-tooltip>
-            <a-tooltip title="进入知识库">
-              <a-button class="action-btn enter-btn" type="text" @click="goToKnowledgeBase(knowledgeBase.knowledge_base_id)">
-                <i class="fas fa-arrow-right"></i>
-              </a-button>
-            </a-tooltip>
+            <a-button class="action-btn" type="text" @click="editKnowledgeBase(knowledgeBase)">
+              <SettingOutlined />
+            </a-button>
+            <a-button class="action-btn delete-btn" type="text" @click="handleDelete(knowledgeBase.knowledge_base_id)">
+              <DeleteOutlined />
+            </a-button>
+            <a-button class="action-btn enter-btn" type="text" @click="goToKnowledgeBase(knowledgeBase)">
+              <ArrowRightOutlined />
+            </a-button>
           </div>
         </div>
       </div>
@@ -75,6 +67,22 @@
         <el-button type="primary" @click="saveKnowledgeBase">保存</el-button>
       </template>
     </el-dialog>
+    <!-- 修改删除确认对话框 -->
+    <a-modal
+        v-model:visible="showDeleteConfirm"
+        title="确认删除"
+        :maskClosable="false"
+        :centered="true"
+        :width="400"
+    >
+      <template #default>
+        <p style="margin: 0;">确定要删除这个知识库吗？</p>
+      </template>
+      <template #footer>
+        <a-button @click="() => showDeleteConfirm = false">取消</a-button>
+        <a-button type="primary" danger @click="confirmDelete">删除</a-button>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -84,8 +92,14 @@ import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import axios from 'axios';
 import { KnowledgeBase } from "@/components/pages/types/types";
+import { SettingOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
+  components: {
+    SettingOutlined,
+    DeleteOutlined,
+    ArrowRightOutlined,
+  },
   setup() {
     const router = useRouter();
     const knowledgeBases = ref<KnowledgeBase[]>([]);
@@ -115,7 +129,6 @@ export default defineComponent({
           headers: { Authorization: token },
         });
 
-        // 将返回的知识库详细信息直接赋值给 knowledgeBases
         knowledgeBases.value = response.data;
       } catch (error) {
         message.error('加载知识库失败');
@@ -174,9 +187,31 @@ export default defineComponent({
         message.error('删除知识库失败');
       }
     };
+    const showDeleteConfirm = ref(false);
+    const deleteId = ref('');
 
-    const goToKnowledgeBase = (id: string) => {
-      router.push({ name: 'KnowledgePointManager', params: { knowledgeBaseId: id } });
+    const handleDelete = (id: string) => {
+      deleteId.value = id;
+      showDeleteConfirm.value = true;
+    };
+
+    const confirmDelete = async () => {
+      await deleteKnowledgeBase(deleteId.value);
+      showDeleteConfirm.value = false;
+    };
+
+    const goToKnowledgeBase = (knowledgeBase: KnowledgeBase) => {
+      if (knowledgeBase && knowledgeBase.knowledge_base_id) {
+        router.push({
+          name: 'KnowledgePointManager',
+          params: {
+            user_id: currentUserId.value,
+            knowledge_base_id: knowledgeBase.knowledge_base_id
+          }
+        });
+      } else {
+        message.error('无效的知识库ID');
+      }
     };
 
     onMounted(() => {
@@ -193,10 +228,14 @@ export default defineComponent({
       saveKnowledgeBase,
       editKnowledgeBase,
       deleteKnowledgeBase,
-      goToKnowledgeBase
+      goToKnowledgeBase,
+      showDeleteConfirm,
+      handleDelete,
+      confirmDelete
     };
-  },
-});
+    },
+}
+);
 </script>
 
 <style scoped>

@@ -1,0 +1,23 @@
+.point-manager {
+    padding: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+:deep(.ant-btn-link) {
+    padding: 0 8px;
+}
+
+:deep(.ant-btn-link i) {
+    margin-right: 4px;
+}

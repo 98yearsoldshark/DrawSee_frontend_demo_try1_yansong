@@ -5,7 +5,9 @@
 }
 
 .sidebar {
-    width: 240px;
+    width: 20%; /* 改为百分比 */
+    min-width: 240px;
+    max-width: 300px;
     background-color: #fff;
     border-right: 1px solid #e5e7eb;
     display: flex;
@@ -17,27 +19,27 @@
 .logo-area {
     padding: 24px;
     border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
 }
 
 .logo-area h2 {
     margin: 0;
-    color: #1c3faa;
-    font-size: 20px;
-}
-
-.sidebar-menu {
-    padding: 24px;
+    font-size: 18px;
+    color: #1a1f36;
 }
 
 .create-btn {
-    width: 80%;
-    max-width: 200px;
-    background-color: #4ae2d5;
-    border-color: #4ae2d5;
+    width: 100%;
     height: 44px;
-    padding: 0 24px;
     font-size: 15px;
-    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,36 +47,21 @@
     transition: all 0.3s ease;
 }
 
-.create-btn:hover {
-    background-color: #07b6b6;
-    border-color: #07b6b6;
-    transform: translateY(-1px);
-}
-
 .main-content {
     flex: 1;
-    margin-left: 240px;
-    padding: 24px 40px;
-}
-
-.content-header {
-    margin-bottom: 32px;
-}
-
-.content-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1a1f36;
-    margin: 0;
+    margin-left: 20%; /* 对应sidebar宽度 */
+    padding: 24px 3%; /* 使用百分比 */
 }
 
 .knowledge-base-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
+    width: 100%;
 }
 
 .kb-card {
+    width: 100%;
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -82,22 +69,48 @@
     transition: all 0.3s ease;
 }
 
-.kb-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
-}
-
 .kb-image {
     width: 100%;
-    height: 160px;
+    padding-top: 56.25%; /* 16:9 比例 */
+    position: relative;
     overflow: hidden;
 }
 
 .kb-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+}
+
+/* 删除确认对话框样式 */
+.modal-footer {
+    margin-top: 24px;
+    text-align: right;
+    gap: 8px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        min-width: unset;
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 16px;
+    }
+
+    .knowledge-base-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .kb-card:hover .kb-image img {
@@ -129,55 +142,47 @@
 .kb-actions {
     display: flex;
     justify-content: flex-end;
-    padding: 12px 16px;
-    border-top: 1px solid #edf2f7;
     gap: 8px;
+    padding: 8px;
 }
 
 .action-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    color: #4a5568;
-    transition: all 0.2s ease;
+    padding: 4px 8px;
 }
 
-.action-btn:hover {
-    background: #f7fafc;
+.action-btn i {
+    font-size: 16px;
+}
+
+.delete-btn {
+    color: #ff4d4f;
 }
 
 .delete-btn:hover {
-    color: #e53e3e;
+    color: #ff7875;
+}
+
+.enter-btn {
+    color: #1890ff;
 }
 
 .enter-btn:hover {
-    color: #1c3faa;
+    color: #40a9ff;
 }
 
-.kb-dialog :deep(.el-dialog__body) {
+/* 确保对话框样式正确 */
+:deep(.ant-modal-content) {
+    border-radius: 8px;
+}
+
+:deep(.ant-modal-header) {
+    border-radius: 8px 8px 0 0;
+}
+
+:deep(.ant-modal-body) {
     padding: 24px;
 }
 
-.kb-dialog :deep(.el-dialog__header) {
-    padding: 20px 24px;
-    margin: 0;
-    border-bottom: 1px solid #edf2f7;
-}
-
-.kb-dialog :deep(.el-dialog__footer) {
-    padding: 20px 24px;
-    border-top: 1px solid #edf2f7;
-}
-
-:deep(.el-form-item__label) {
-    font-weight: 500;
-    color: #1a1f36;
-}
-
-:deep(.el-input__inner) {
-    border-radius: 8px;
-}
-
-:deep(.el-textarea__inner) {
-    border-radius: 8px;
+:deep(.ant-modal-footer) {
+    padding: 16px 24px;
 }
